@@ -3,6 +3,8 @@ export interface Card {
   month: number;
 }
 
+export type CardSet = Array<Card>;
+
 export type MonthFormat = {
   [index: string]: number | undefined;
   kasu: number;

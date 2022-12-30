@@ -1,7 +1,6 @@
-import { Card } from "./deck";
+import { Card, CardSet } from "./deck";
 
 const yakuMatcher = (() => {
-  type CardSet = Array<Card>;
   // { [month]: { [cardName]: # of instances } }
   type TabulatedCards = { [index: number]: { [index: string]: number } };
   type YakuIdentifierType = (cards: TabulatedCards) => number;
