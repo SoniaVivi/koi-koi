@@ -1,5 +1,5 @@
 export interface Card {
-  name: string;
+  name: "hikari" | "tanzaku" | "tane" | "kasu";
   month: number;
 }
 
@@ -28,6 +28,22 @@ export const completeDeck: Array<MonthFormat> = [
   { hikari: 1, kasu: 3 },
 ];
 
+export const duplicateCardSet = (cardSet: CardSet): CardSet =>
+  cardSet.map((card: Card) => ({ ...card }));
+
+const scoresByName = { hikari: 20, tane: 10, tanzaku: 5, kasu: 1 };
+
+export const sortCardsFunc = (a: Card, b: Card): number =>
+  a["month"] < b["month"]
+    ? -1
+    : b["month"] < a["month"]
+    ? 1
+    : scoresByName[a["name"]] > scoresByName[b["name"]]
+    ? -1
+    : scoresByName[b["name"]] > scoresByName[a["name"]]
+    ? 1
+    : 0;
+
 const deck = ({ hideCards = true }) => {
   const shuffle = (): void => {
     cards = [...cards, ...discardedCards]
@@ -42,7 +58,10 @@ const deck = ({ hideCards = true }) => {
       ["hikari", "tanzaku", "tane", "kasu"].forEach(
         (cardName: keyof MonthFormat) => {
           for (let x = 0; x < (data[cardName] ?? -1); x += 1)
-            temp.push({ name: cardName as string, month: i + 1 });
+            temp.push({
+              name: cardName as "hikari" | "tanzaku" | "tane" | "kasu",
+              month: i + 1,
+            });
         }
       );
     });

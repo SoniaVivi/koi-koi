@@ -1,7 +1,8 @@
-import { Card } from "../../components/game/deck";
-import game, { OyaRound, SetupRound } from "../../components/game/game";
+import { Card, CardSet, sortCardsFunc } from "../../components/game/deck";
+import gameFactory, { OyaRound, SetupRound } from "../../components/game/game";
 
-describe("game", () => {
+describe("game.chooseOya, game.setup", () => {
+  const game = gameFactory();
   let hasChoosenOya = false;
   test.each(game.chooseOya())("%s", (current: OyaRound) => {
     const result: number = [
@@ -62,5 +63,69 @@ describe("game", () => {
       playerTwo: [...current["playerTwo"]],
     };
     i += 1;
+  });
+});
+
+describe("gameplay logic", () => {
+  const game = gameFactory(true);
+  game.chooseOya();
+  game.setup();
+
+  // Still Need: checking for lucky hands, Yaku formation,
+  // yaku improvement, Ko turn, Koi-koi && Shobu, scoring
+
+  it("begins with the Oya", () => {
+    expect(game.getCurrentPlayer()).toEqual(game.getOya());
+  });
+
+  test.each(["First Card", "drawpile card"])("%s", (current: string) => {
+    if (current == "First Card") {
+      expect(game.getCardToPlay()).toEqual(null);
+    }
+
+    expect(game.getCardToMatch()).toEqual(null);
+
+    const cardToPlay: Card =
+      current == "First Card" ? game.getCardSet("oya")[0] : game.draw();
+
+    const matches: CardSet = game
+      .getCardSet("playingField")
+      .reduce(
+        (totalMatches: CardSet, currentCard: Card) =>
+          currentCard["month"] == cardToPlay["month"]
+            ? [...totalMatches, currentCard]
+            : totalMatches,
+        []
+      );
+
+    expect((game.play({ ...cardToPlay } as Card) as CardSet).sort()).toEqual(
+      [cardToPlay, ...matches].sort()
+    );
+
+    if (matches.length == 1 || matches.length == 3) {
+      expect(game.getScorePile("oya").slice(-2).sort(sortCardsFunc)).toEqual(
+        [cardToPlay, ...matches].sort(sortCardsFunc)
+      );
+    } else if (matches.length == 2) {
+      if (current == "First Card") {
+        expect(game.getScorePile("oya")).toEqual([]);
+      }
+
+      const randInt = Math.floor(Math.random() * 2);
+      game.play({ ...matches[randInt] });
+      expect(game.getScorePile("oya").slice(-2).sort()).toEqual(
+        [matches[randInt], cardToPlay].sort()
+      );
+    } else {
+      expect(
+        !!game
+          .getHand("playingField")
+          .find(
+            (card: Card) =>
+              card["month"] == cardToPlay["month"] &&
+              card["name"] == cardToPlay["name"]
+          )
+      ).toEqual(true);
+    }
   });
 });
