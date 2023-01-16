@@ -1,0 +1,87 @@
+:root {
+  --lm-body-bg: #f5f5f5;
+  --lm-main-bg: #fff;
+  --lm-text: #000;
+  --main-border-radius: 5px;
+  --main-border: 1px solid var(--main-border-color);
+  --main-button-transition-time: 0.1s;
+  --main-nav-selected: rgba(85, 205, 252, 0.226);
+  --main-card-gap: 10px;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+body {
+  background-color: var(--lm-body-bg);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+  list-style: none;
+}
+
+.main-button {
+  height: fit-content;
+  margin-bottom: 8px;
+  border: var(--main-border);
+  border-radius: var(--main-border-radius);
+  background-color: var(--lm-main-bg);
+  transition: all var(--main-button-transition-time);
+
+  &:active {
+    border-color: var(--main-nav-selected);
+    background-color: var(--main-nav-selected);
+    translate: 2px 2px;
+    box-shadow: 0 0 0 rgba(#fff, 0);
+  }
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.hide {
+  display: none;
+  visibility: hidden;
+}
+
+.flex {
+  display: flex;
+
+  &.space-between {
+    justify-content: space-between;
+  }
+
+  &.space-around {
+    justify-content: space-around;
+  }
+
+  &.wrap {
+    flex-wrap: wrap;
+  }
+
+  &.justify-center {
+    justify-content: center;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+  }
+  body {
+    color: white;
+    background: black;
+  }
+}

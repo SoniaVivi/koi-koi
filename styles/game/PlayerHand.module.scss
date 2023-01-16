@@ -1,0 +1,24 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  width: 100%;
+  min-height: 35vh;
+  height: fit-content;
+
+  &.cardsAtTop {
+    align-items: flex-end;
+  }
+
+  &.cardsAtBottom {
+    flex-direction: column-reverse;
+  }
+}
+
+.cardWrapper {
+  width: 100%;
+
+  > * {
+    margin-right: var(--main-card-gap);
+  }
+}

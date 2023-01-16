@@ -1,4 +1,4 @@
-import deck from "../../components/game/deck";
+import deck, { completeDeck } from "../../game/deck";
 
 describe("Deck", () => {
   const hanafudaDeck = deck();
