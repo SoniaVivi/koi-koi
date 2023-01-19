@@ -28,6 +28,9 @@ export const completeDeck: Array<MonthFormat> = [
   { hikari: 1, kasu: 3 },
 ];
 
+export const sameCard = (a: Card, b: Card | null): boolean =>
+  b !== null && a["month"] == b["month"] && a["name"] == b["name"];
+
 export const duplicateCardSet = (cardSet: CardSet): CardSet =>
   cardSet.map((card: Card) => ({ ...card }));
 
@@ -44,7 +47,7 @@ export const sortCardsFunc = (a: Card, b: Card): number =>
     ? 1
     : 0;
 
-const deck = ({ hideCards = true }) => {
+const deck = ({ hideCards = true } = {}) => {
   const shuffle = (): void => {
     cards = [...cards, ...discardedCards]
       .map((value) => ({ value, sort: Math.random() }))
@@ -79,14 +82,33 @@ const deck = ({ hideCards = true }) => {
     return temp;
   };
   const getDiscardedCards = (): Array<Card> => [...discardedCards];
+  const luckyHandShuffle = () => {
+    let temp = [...cards, ...discardedCards].sort((a, b) => a.month - b.month);
+    cards = [];
+    let i = 0;
+    let pos = 0;
+    while (temp.length != 0) {
+      if (i == 2) {
+        pos = 0;
+        i = 0;
+      }
+      cards = [...cards, ...temp.splice(pos, 2)];
+      pos = i == 0 ? (pos = 2) : (pos = 4);
+      i += 1;
+    }
+    discardedCards = [];
+  };
 
   return {
     count,
     list,
     shuffle,
-    cards: hideCards ? list() : cards,
+    get cards() {
+      return hideCards ? list() : [...cards];
+    },
     drawCard,
     getDiscardedCards,
+    luckyHandShuffle: hideCards ? shuffle : luckyHandShuffle,
   };
 };
 

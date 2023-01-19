@@ -1,9 +1,14 @@
 import { Card, CardSet, sortCardsFunc } from "../../game/deck";
-import gameFactory, { OyaRound, SetupRound } from "../../game/game";
+import gameFactory, {
+  OyaRound,
+  PlayerNames,
+  SetupRound,
+} from "../../game/game";
 
 describe("game.chooseOya, game.setup", () => {
-  const game = gameFactory();
+  const game = gameFactory({ testMode: true });
   let hasChoosenOya = false;
+
   test.each(game.chooseOya())("%s", (current: OyaRound) => {
     const result: number = [
       current["playerOne"].oya,
@@ -21,7 +26,7 @@ describe("game.chooseOya, game.setup", () => {
   });
 
   it("returns the oya", () => {
-    expect(game.getOya()).toMatch(/[(playerOne)(playerTwo)]/);
+    expect(game.oya).toMatch(/[(playerOne)(playerTwo)]/);
   });
 
   let prev: SetupRound = {
@@ -29,67 +34,137 @@ describe("game.chooseOya, game.setup", () => {
     playerOne: [],
     playerTwo: [],
     playingField: [],
-    suppliedEntity: game.getOya(),
+    suppliedEntity: game.oya,
   };
   let i = 0;
+  let prevHadLuckyHand = false;
 
   const turnOrder: Array<"playerOne" | "playerTwo" | "playingField"> = [
-    game.getKo(),
+    game.ko,
     "playingField",
-    game.getOya(),
+    game.oya,
   ];
 
-  test.each(game.setup())("%s", (current: SetupRound) => {
-    const changedHands = turnOrder.reduce(
-      (total: string[], str): string[] =>
-        current[str].length != prev[str].length ? [...total, str] : total,
-      []
-    );
+  test.each(game.setup({ forceFirstLuckyHand: true }))(
+    "%s",
+    (current: SetupRound) => {
+      if (prevHadLuckyHand) {
+        expect(current["deckCount"]).toEqual(46);
+        expect(current["suppliedEntity"]).toEqual(turnOrder[0]);
+        expect(current[current["suppliedEntity"]].length).toEqual(2);
+        expect(current["playingField"].length).toEqual(0);
+        prev = {
+          ...current,
+          playerOne: [...current["playerOne"]],
+          playerTwo: [...current["playerTwo"]],
+        };
+        prevHadLuckyHand = false;
+        i += 1;
+        return;
+      }
 
-    expect(changedHands.length).toEqual(1);
-    expect(current["suppliedEntity"]).toEqual(changedHands[0]);
-    expect(current["suppliedEntity"]).toEqual(turnOrder[i % 3]);
+      const monthCounts: {
+        playerOne: { [index: number]: number };
+        playerTwo: { [index: number]: number };
+        playingField: { [index: number]: number };
+      } = (
+        ["playerOne", "playerTwo", "playingField"] as Array<
+          PlayerNames | "playingField"
+        >
+      )
+        .map(
+          (
+            currentHand: PlayerNames | "playingField"
+          ): [PlayerNames | "playingField", { [index: number]: number }] => {
+            const hand: CardSet = current[currentHand];
+            let cardCounts: { [index: number]: number } = {};
+            hand.forEach(
+              ({ month }) =>
+                (cardCounts = {
+                  ...cardCounts,
+                  [month]: (cardCounts[month] ?? 0) + 1,
+                })
+            );
+            return [currentHand, cardCounts];
+          }
+        )
+        .reduce(
+          (
+            obj: {
+              playerOne: { [index: number]: number };
+              playerTwo: { [index: number]: number };
+              playingField: { [index: number]: number };
+            },
+            current: [PlayerNames | "playingField", { [index: number]: number }]
+          ) => ({ ...obj, [current[0]]: current[1] }),
+          { playerOne: {}, playerTwo: {}, playingField: {} }
+        );
 
-    expect(
-      current[current["suppliedEntity"]].length -
-        prev[current["suppliedEntity"]].length
-    ).toEqual(2);
+      const changedHands = turnOrder.reduce(
+        (total: string[], str): string[] =>
+          current[str].length != prev[str].length ? [...total, str] : total,
+        []
+      );
 
-    expect(current["deckCount"] - prev["deckCount"]).toEqual(-2);
+      expect(changedHands.length).toEqual(1);
+      expect(current["suppliedEntity"]).toEqual(changedHands[0]);
+      expect(current["suppliedEntity"]).toEqual(turnOrder[i % 3]);
 
-    prev = {
-      ...current,
-      playerOne: [...current["playerOne"]],
-      playerTwo: [...current["playerTwo"]],
-    };
-    i += 1;
-  });
+      expect(
+        current[current["suppliedEntity"]].length -
+          prev[current["suppliedEntity"]].length
+      ).toEqual(2);
+
+      expect(current["deckCount"] - prev["deckCount"]).toEqual(-2);
+
+      prev = {
+        ...current,
+        playerOne: [...current["playerOne"]],
+        playerTwo: [...current["playerTwo"]],
+      };
+      i += 1;
+
+      Object.values(monthCounts).forEach((countObj) => {
+        let totalTwos = 0;
+        Object.values(countObj).forEach((count) => {
+          if (count == 2) totalTwos += 1;
+
+          count >= 4 || totalTwos == 4
+            ? (() => {
+                prevHadLuckyHand = true;
+                i = 0;
+              })()
+            : null;
+        });
+      });
+    }
+  );
 });
 
 describe("gameplay logic", () => {
-  const game = gameFactory(true);
+  const game = gameFactory({ testMode: true });
   game.chooseOya();
   game.setup();
 
-  // Still Need: checking for lucky hands, Yaku formation,
-  // yaku improvement, Ko turn, Koi-koi && Shobu, scoring
+  // Still Need:
+  // Koi-koi, scoring
 
   it("begins with the Oya", () => {
-    expect(game.getCurrentPlayer()).toEqual(game.getOya());
+    expect(game.getCurrentPlayer()).toEqual(game.oya);
   });
 
   test.each(["First Card", "drawpile card"])("%s", (current: string) => {
     if (current == "First Card") {
-      expect(game.getCardToPlay()).toEqual(null);
+      expect(game.cardToPlay).toEqual(null);
     }
 
-    expect(game.getCardToMatch()).toEqual(null);
+    expect(game.cardToMatch).toEqual(null);
 
     const cardToPlay: Card =
-      current == "First Card" ? game.getCardSet("oya")[0] : game.draw();
+      current == "First Card" ? game.getHand("oya")[0] : game.draw();
 
     const matches: CardSet = game
-      .getCardSet("playingField")
+      .getHand("playingField")
       .reduce(
         (totalMatches: CardSet, currentCard: Card) =>
           currentCard["month"] == cardToPlay["month"]
@@ -127,5 +202,186 @@ describe("gameplay logic", () => {
           )
       ).toEqual(true);
     }
+  });
+
+  it("replaces score pile", () => {
+    game.forceScorePile("playerOne", [
+      { month: 1, name: "hikari" },
+      { month: 3, name: "hikari" },
+      { month: 8, name: "hikari" },
+      { month: 11, name: "hikari" },
+      { month: 12, name: "hikari" },
+    ]);
+
+    expect(game.getScorePile("playerOne")).toEqual([
+      { month: 1, name: "hikari" },
+      { month: 3, name: "hikari" },
+      { month: 8, name: "hikari" },
+      { month: 11, name: "hikari" },
+      { month: 12, name: "hikari" },
+    ]);
+  });
+
+  it("returns best possible yaku in scorepile", () => {
+    game.forceScorePile("playerOne", [
+      { month: 1, name: "hikari" },
+      { month: 3, name: "hikari" },
+      { month: 8, name: "hikari" },
+      { month: 11, name: "hikari" },
+      { month: 12, name: "hikari" },
+    ]);
+
+    expect(game.getPotentialScore("playerOne")).toEqual({
+      score: 15,
+      yaku: ["fiveHikari"],
+    });
+
+    game.forceScorePile("playerTwo", [
+      { month: 1, name: "tanzaku" },
+      { month: 2, name: "tanzaku" },
+      { month: 3, name: "tanzaku" },
+      { month: 6, name: "tanzaku" },
+      { month: 9, name: "tanzaku" },
+    ]);
+
+    expect(game.getPotentialScore("playerTwo")).toEqual({
+      score: 5,
+      yaku: ["redPoetryTanzaku"],
+    });
+
+    game.forceScorePile("playerTwo", [
+      { month: 1, name: "tanzaku" },
+      { month: 2, name: "tanzaku" },
+      { month: 3, name: "tanzaku" },
+      { month: 6, name: "tanzaku" },
+      { month: 9, name: "tanzaku" },
+      { month: 10, name: "tanzaku" },
+    ]);
+
+    expect(game.getPotentialScore("playerTwo")).toEqual({
+      score: 10,
+      yaku: ["combinedRedPoetryAndBlueTanzaku"],
+    });
+
+    game.forceScorePile("playerTwo", [
+      { month: 1, name: "hikari" },
+      { month: 1, name: "tanzaku" },
+      { month: 1, name: "kasu" },
+      { month: 1, name: "kasu" },
+      { month: 3, name: "hikari" },
+      { month: 3, name: "tanzaku" },
+      { month: 3, name: "kasu" },
+      { month: 3, name: "kasu" },
+    ]);
+
+    expect(game.getPotentialScore("playerTwo")).toEqual({
+      score: 8,
+      yaku: ["monthlyCards", "monthlyCards"],
+    });
+  });
+
+  it("supports shoubu", () => {
+    game.restart();
+    game.chooseOya();
+    game.setup();
+    game.forceScorePile("playerOne", [
+      { month: 1, name: "hikari" },
+      { month: 3, name: "hikari" },
+      { month: 8, name: "hikari" },
+      { month: 11, name: "hikari" },
+      { month: 12, name: "hikari" },
+    ]);
+
+    game.shoubu();
+    expect(game.scores["playerOne"]).toEqual(0);
+    expect(game.scores["playerTwo"]).toEqual(0);
+
+    game.forcePermitToEndRound;
+    game.forceTurn("playerOne", "round call");
+    game.shoubu();
+    expect(game.scores["playerOne"]).toEqual(15);
+    expect(game.scores["playerTwo"]).toEqual(0);
+
+    game.forceScorePile("playerTwo", [
+      { month: 1, name: "hikari" },
+      { month: 3, name: "hikari" },
+      { month: 8, name: "hikari" },
+      { month: 11, name: "hikari" },
+    ]);
+
+    game.forceScorePile("playerOne", [
+      { month: 1, name: "hikari" },
+      { month: 3, name: "hikari" },
+      { month: 8, name: "hikari" },
+      { month: 11, name: "hikari" },
+      { month: 12, name: "hikari" },
+    ]);
+
+    game.forceTurn("playerTwo", "round call");
+    game.shoubu();
+    expect(game.scores["playerTwo"]).toEqual(7);
+    expect(game.scores["playerOne"]).toEqual(15);
+  });
+
+  it("supports koi-koi", () => {
+    game.restart();
+    game.chooseOya();
+    game.setup();
+
+    game.forceScorePile("playerOne", [
+      { month: 1, name: "hikari" },
+      { month: 3, name: "hikari" },
+      { month: 8, name: "hikari" },
+      { month: 11, name: "hikari" },
+      { month: 12, name: "hikari" },
+    ]);
+
+    game.forceScorePile("playerTwo", [
+      { month: 1, name: "hikari" },
+      { month: 3, name: "hikari" },
+      { month: 8, name: "hikari" },
+      { month: 11, name: "hikari" },
+    ]);
+
+    game.forcePermitToEndRound;
+    game.forceTurn("playerOne", "round call");
+
+    expect(game.scores["playerOne"]).toEqual(0);
+    expect(game.scores["playerTwo"]).toEqual(0);
+    expect(game.getScorePile("playerOne")).toEqual([
+      { month: 1, name: "hikari" },
+      { month: 3, name: "hikari" },
+      { month: 8, name: "hikari" },
+      { month: 11, name: "hikari" },
+      { month: 12, name: "hikari" },
+    ]);
+    expect(game.getScorePile("playerTwo")).toEqual([
+      { month: 1, name: "hikari" },
+      { month: 3, name: "hikari" },
+      { month: 8, name: "hikari" },
+      { month: 11, name: "hikari" },
+    ]);
+
+    game.forceTurn("playerOne", "round call");
+    game.koiKoi();
+    game.forceTurn("playerOne", "round call");
+    game.forcePermitToEndRound;
+    game.shoubu();
+    expect(game.scores["playerOne"]).toEqual(30);
+    expect(game.scores["playerTwo"]).toEqual(0);
+    expect(game.getScorePile("playerOne")).toEqual([]);
+    expect(game.getScorePile("playerTwo")).toEqual([]);
+
+    game.forceScorePile("playerOne", [
+      { month: 1, name: "hikari" },
+      { month: 3, name: "hikari" },
+      { month: 8, name: "hikari" },
+      { month: 11, name: "hikari" },
+      { month: 12, name: "hikari" },
+    ]);
+    game.forceTurn("playerOne", "round call");
+    game.shoubu();
+    expect(game.scores["playerOne"]).toEqual(45);
+    expect(game.scores["playerTwo"]).toEqual(0);
   });
 });
