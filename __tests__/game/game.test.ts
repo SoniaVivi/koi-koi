@@ -1,9 +1,12 @@
-import { Card, CardSet, sortCardsFunc } from "../../game/deck";
-import gameFactory, {
+import { sortCardsFunc } from "../../game/deck";
+import gameFactory from "../../game/game";
+import {
+  Card,
+  CardSet,
   OyaRound,
   PlayerNames,
   SetupRound,
-} from "../../game/game";
+} from "../../game/gameTypes";
 
 describe("game.chooseOya, game.setup", () => {
   const game = gameFactory({ testMode: true });

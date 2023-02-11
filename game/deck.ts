@@ -1,17 +1,4 @@
-export interface Card {
-  name: "hikari" | "tanzaku" | "tane" | "kasu";
-  month: number;
-}
-
-export type CardSet = Array<Card>;
-
-export type MonthFormat = {
-  [index: string]: number | undefined;
-  kasu: number;
-  hikari?: number;
-  tane?: number;
-  tanzaku?: number;
-};
+import { Card, CardSet, MonthFormat } from "./gameTypes";
 
 export const completeDeck: Array<MonthFormat> = [
   { hikari: 1, tanzaku: 1, kasu: 2 },
