@@ -1,4 +1,4 @@
-import { PlayerAliases, PlayerNames, PlayerRole } from "./game";
+import { PlayerAliases, PlayerNames, PlayerRole } from "./gameTypes";
 
 type TurnCounter = {
   currentPhase: string;

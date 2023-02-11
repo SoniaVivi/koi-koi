@@ -1,43 +1,14 @@
-import { Card, CardSet, duplicateCardSet } from "./deck";
+import { duplicateCardSet } from "./deck";
 import {
+  Card,
   CardHandsAndPlayerRoles,
+  CardSet,
   PlayerAliases,
-  PlayerCardSets,
   PlayerNames,
-} from "./game";
+  Score,
+  ScorePiles,
+} from "./gameTypes";
 import { getYakuCardIndices, identifyYaku } from "./yakuMatcher";
-
-export type Score = { score: number; yaku: Array<string> };
-
-export type ScorePiles = PlayerCardSets & {
-  scores: {
-    playerOne: {
-      total: number;
-      scored: CardSet;
-      yaku: string[];
-      modifier: number;
-      tempScore: number;
-    };
-    playerTwo: {
-      total: number;
-      scored: CardSet;
-      yaku: string[];
-      modifier: number;
-      tempScore: number;
-    };
-  };
-  get: (name: PlayerAliases) => CardSet;
-  replace: (name: PlayerAliases, replacementHand: CardSet) => CardSet;
-  getTotal: (target: PlayerAliases) => Score;
-  add: (name: PlayerAliases, cards: Card | Array<Card>) => CardSet;
-  scorePoints: (name: PlayerAliases) => void;
-  addScoreModifier: (player: PlayerAliases, modifier: number) => void;
-  resetScoreModifiers: () => void;
-  calculateTempScore: () => { score: number; isImproved: boolean };
-  resetTempScore: () => void;
-  chooseWinner: () => PlayerNames | "tie";
-  get playerScores(): { playerOne: number; playerTwo: number };
-};
 
 const createScorePiles = (
   getName: (name: CardHandsAndPlayerRoles) => PlayerNames

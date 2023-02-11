@@ -1,42 +1,20 @@
-import createCardHands, { CardHands } from "./createCardHands";
-import createScorePiles, { ScorePiles } from "./createScorePiles";
+import createCardHands from "./createCardHands";
+import createScorePiles from "./createScorePiles";
 import createTurnCounter from "./createTurnCounter";
-import deck, { Card, CardSet, duplicateCardSet, sameCard } from "./deck";
-
-export type OyaRound = {
-  playerOne: { card: Card; oya: boolean };
-  playerTwo: { card: Card; oya: boolean };
-};
-
-export type OyaResult = Array<OyaRound>;
-
-export type PlayerNames = "playerOne" | "playerTwo";
-
-export type SetupRound = {
-  deckCount: number;
-  playerOne: CardSet;
-  playerTwo: CardSet;
-  playingField: CardSet;
-  suppliedEntity: PlayerNames | "playingField";
-};
-
-export type PlayerRole = "oya" | "ko";
-
-export type CardHandsAndPlayerRoles =
-  | PlayerNames
-  | PlayerRole
-  | "playingField"
-  | "current"
-  | "opponent";
-
-export type PlayerCardSets = {
-  playerOne: CardSet;
-  playerTwo: CardSet;
-};
-
-export type PlayerAliases = PlayerNames | PlayerRole | "current";
-
-export type GameLengths = "year" | "halfYear" | "season";
+import deck, { duplicateCardSet, sameCard } from "./deck";
+import {
+  Card,
+  CardHands,
+  CardHandsAndPlayerRoles,
+  CardSet,
+  GameLengths,
+  OyaResult,
+  PlayerAliases,
+  PlayerNames,
+  PlayerRole,
+  ScorePiles,
+  SetupRound,
+} from "./gameTypes";
 
 const game = ({ testMode = false, gameLength = "year" } = {}) => {
   // Instance variables and player getters

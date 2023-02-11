@@ -1,20 +1,11 @@
-import { Card, CardSet, duplicateCardSet, sameCard } from "./deck";
-import { CardHandsAndPlayerRoles, PlayerCardSets, PlayerNames } from "./game";
-
-export type CardHands = PlayerCardSets & {
-  playingField: CardSet;
-  replace: (name: CardHandsAndPlayerRoles, newHand: CardSet) => CardSet;
-  remove: (
-    name: CardHandsAndPlayerRoles,
-    cards: Card | CardSet
-  ) => Card | CardSet;
-  add: (player: CardHandsAndPlayerRoles, card: Card) => CardSet;
-  exists: (name: CardHandsAndPlayerRoles, card: Card) => boolean;
-  get: (name: CardHandsAndPlayerRoles) => CardSet;
-  duplicate: (name: CardHandsAndPlayerRoles) => CardSet;
-  getFieldMatches: (card: Card | null) => CardSet;
-  get doPlayersHaveCards(): boolean;
-};
+import { duplicateCardSet, sameCard } from "./deck";
+import {
+  Card,
+  CardHands,
+  CardHandsAndPlayerRoles,
+  CardSet,
+  PlayerNames,
+} from "./gameTypes";
 
 const createCardHands = (
   getName: (name: CardHandsAndPlayerRoles) => PlayerNames | "playingField"

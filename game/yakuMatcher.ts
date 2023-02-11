@@ -1,4 +1,5 @@
-import { Card, CardSet, sameCard } from "./deck";
+import { sameCard } from "./deck";
+import { Card, CardSet } from "./gameTypes";
 
 // { [month]: { [cardName]: # of instances } }
 type TabulatedCards = { [index: number]: { [index: string]: number } };
