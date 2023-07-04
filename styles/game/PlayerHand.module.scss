@@ -1,24 +1,75 @@
 .container {
+  position: relative;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   max-width: 100%;
+  min-height: 225px;
   width: 100%;
-  min-height: 35vh;
   height: fit-content;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.05);
+  background-color: rgba(0, 0, 0, 0.035);
+}
 
-  &.cardsAtTop {
-    align-items: flex-end;
-  }
-
-  &.cardsAtBottom {
-    flex-direction: column-reverse;
-  }
+.container.playingField .cardWrapper {
+  grid: 1fr 1fr / auto-flow 63px;
 }
 
 .cardWrapper {
-  width: 100%;
+  display: grid;
+  grid: 1fr / auto-flow 63px;
+  gap: 10px;
+  height: 100%;
 
   > * {
     margin-right: var(--main-card-gap);
+  }
+}
+
+.matchable {
+  box-shadow: var(--interactable-shadow);
+  cursor: pointer;
+}
+
+.overlay {
+  position: absolute;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: var(--z-index-above);
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.endRoundOptionWrapper {
+  position: relative;
+  max-height: 103px;
+
+  span {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    color: var(--text-invert);
+    text-align: center;
+    text-transform: capitalize;
+  }
+}
+
+@media (max-width: 720px) {
+  .cardWrapper {
+    grid: 1fr 1fr / auto-flow 63px;
   }
 }

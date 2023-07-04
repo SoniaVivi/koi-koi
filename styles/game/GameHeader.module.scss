@@ -2,44 +2,46 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  max-height: 120px;
-  min-height: 120px;
-  width: 100%;
+  flex-grow: 1;
+  max-height: var(--header-height);
+  min-height: var(--header-height);
   padding: 0 50px;
+  margin: 0 -50px;
 
   > div {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    width: 60%;
+    max-width: 460px;
+    width: 100%;
     margin-left: auto;
   }
+}
+
+.playerWrapper {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
 }
 
 .score {
   font-size: 2rem;
 }
 
+.playerData {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  font-size: 0.9rem;
+  color: var(--text-light);
+}
+
 .turnDisplay {
   display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
   max-height: 1.25rem;
   font-size: 1.25rem;
-
-  > :first-child {
-    display: flex;
-
-    &::after {
-      display: flex;
-      content: "";
-      --height: 120%;
-      min-width: 2px;
-      max-width: 2px;
-      max-height: var(--height);
-      min-height: var(--height);
-      margin: auto 5px;
-      background-color: var(--lm-text);
-    }
-  }
 }
 
 .menu {
@@ -47,8 +49,8 @@
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
-  width: 36px;
-  height: 36px;
+  width: 30px;
+  height: 30px;
   margin-left: auto;
 
   > * {

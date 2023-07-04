@@ -1,10 +1,48 @@
 .container {
   display: flex;
-  flex-direction: column;
-  max-width: 960px;
-  width: 100%;
-  min-height: 100vh;
-  height: fit-content;
+  flex-flow: column nowrap;
+  flex-shrink: 1;
+  max-width: 100%;
+  width: 960px;
+  height: 100%;
   margin: 0 auto;
+  padding: 0 25px;
+  padding-top: 0;
   background-color: var(--lm-main-bg);
+}
+
+.wrapper {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  min-height: calc(100vh - var(--header-height));
+  max-height: calc(100vh - var(--header-height));
+  height: fit-content;
+
+  > div:nth-child(2) {
+    display: flex;
+    gap: 15px;
+    flex-flow: column nowrap;
+    align-items: center;
+    min-width: fit-content;
+    max-height: 100%;
+    width: calc(100% - 200px);
+    margin-left: auto;
+  }
+}
+
+.sidebar {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-around;
+  max-width: fit-content;
+  width: 80px;
+  max-height: 100%;
+  height: 100vh;
+  margin-left: auto;
+
+  &:first-child {
+    margin-left: 0;
+    margin-right: auto;
+  }
 }

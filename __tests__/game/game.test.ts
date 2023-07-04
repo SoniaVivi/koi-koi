@@ -153,7 +153,7 @@ describe("gameplay logic", () => {
   // Koi-koi, scoring
 
   it("begins with the Oya", () => {
-    expect(game.getCurrentPlayer()).toEqual(game.oya);
+    expect(game.currentPlayer).toEqual(game.oya);
   });
 
   test.each(["First Card", "drawpile card"])("%s", (current: string) => {
@@ -236,7 +236,7 @@ describe("gameplay logic", () => {
 
     expect(game.getPotentialScore("playerOne")).toEqual({
       score: 15,
-      yaku: ["fiveHikari"],
+      yaku: [["fiveHikari", 15]],
     });
 
     game.forceScorePile("playerTwo", [
@@ -249,7 +249,7 @@ describe("gameplay logic", () => {
 
     expect(game.getPotentialScore("playerTwo")).toEqual({
       score: 5,
-      yaku: ["redPoetryTanzaku"],
+      yaku: [["redPoetryTanzaku", 5]],
     });
 
     game.forceScorePile("playerTwo", [
@@ -263,7 +263,7 @@ describe("gameplay logic", () => {
 
     expect(game.getPotentialScore("playerTwo")).toEqual({
       score: 10,
-      yaku: ["combinedRedPoetryAndBlueTanzaku"],
+      yaku: [["combinedRedPoetryAndBlueTanzaku", 10]],
     });
 
     game.forceScorePile("playerTwo", [
@@ -279,7 +279,10 @@ describe("gameplay logic", () => {
 
     expect(game.getPotentialScore("playerTwo")).toEqual({
       score: 8,
-      yaku: ["monthlyCards", "monthlyCards"],
+      yaku: [
+        ["monthlyCards", 4],
+        ["monthlyCards", 4],
+      ],
     });
   });
 
@@ -302,7 +305,7 @@ describe("gameplay logic", () => {
     game.forcePermitToEndRound;
     game.forceTurn("playerOne", "round call");
     game.shoubu();
-    expect(game.scores["playerOne"]).toEqual(15);
+    expect(game.scores["playerOne"]).toEqual(30);
     expect(game.scores["playerTwo"]).toEqual(0);
 
     game.forceScorePile("playerTwo", [
@@ -322,8 +325,8 @@ describe("gameplay logic", () => {
 
     game.forceTurn("playerTwo", "round call");
     game.shoubu();
-    expect(game.scores["playerTwo"]).toEqual(7);
-    expect(game.scores["playerOne"]).toEqual(15);
+    expect(game.scores["playerTwo"]).toEqual(14);
+    expect(game.scores["playerOne"]).toEqual(30);
   });
 
   it("supports koi-koi", () => {
@@ -370,7 +373,7 @@ describe("gameplay logic", () => {
     game.forceTurn("playerOne", "round call");
     game.forcePermitToEndRound;
     game.shoubu();
-    expect(game.scores["playerOne"]).toEqual(30);
+    expect(game.scores["playerOne"]).toEqual(60);
     expect(game.scores["playerTwo"]).toEqual(0);
     expect(game.getScorePile("playerOne")).toEqual([]);
     expect(game.getScorePile("playerTwo")).toEqual([]);
@@ -383,8 +386,30 @@ describe("gameplay logic", () => {
       { month: 12, name: "hikari" },
     ]);
     game.forceTurn("playerOne", "round call");
+    game.forcePermitToEndRound;
     game.shoubu();
-    expect(game.scores["playerOne"]).toEqual(45);
+    expect(game.scores["playerOne"]).toEqual(90);
     expect(game.scores["playerTwo"]).toEqual(0);
+  });
+
+  it("supports doubling score if opponent has called Koi Koi and doubling score if score >= 7", () => {
+    game.forceTurn("playerOne", "round call");
+    game.forcePermitToEndRound;
+    game.koiKoi();
+
+    game.forceScorePile("playerTwo", [
+      { month: 1, name: "hikari" },
+      { month: 3, name: "hikari" },
+      { month: 8, name: "hikari" },
+      { month: 11, name: "hikari" },
+      { month: 12, name: "hikari" },
+    ]);
+
+    game.forceTurn("playerTwo", "round call");
+    game.forcePermitToEndRound;
+    game.shoubu();
+
+    expect(game.scores["playerOne"]).toEqual(90);
+    expect(game.scores["playerTwo"]).toEqual(60);
   });
 });

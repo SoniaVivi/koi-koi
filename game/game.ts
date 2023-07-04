@@ -140,6 +140,7 @@ const game = ({ testMode = false, gameLength = "year" } = {}) => {
     } else {
       drawPile.shuffle();
     }
+    cardHands.reset();
     let result: Array<SetupRound> = [];
     let order: Array<CardHandKeys> = [_ko, "playingField", _oya];
 
@@ -171,9 +172,7 @@ const game = ({ testMode = false, gameLength = "year" } = {}) => {
         ) == 4
       ) {
         drawPile.shuffle();
-        cardHands["playerOne"] = [];
-        cardHands["playerTwo"] = [];
-        cardHands["playingField"] = [];
+        cardHands.reset();
         x = -1;
       }
     }
@@ -281,8 +280,8 @@ const game = ({ testMode = false, gameLength = "year" } = {}) => {
       scorePiles.scorePoints("current");
       scorePiles.resetScoreModifiers();
       checkIfRoundLimitReached();
-      turnCounter.endRound();
       [_oya, _ko] = [getName("current"), getName("opponent")];
+      turnCounter.endRound();
 
       return true;
     }
@@ -328,7 +327,6 @@ const game = ({ testMode = false, gameLength = "year" } = {}) => {
     chooseOya,
     setup,
     hasChoosenOya: () => _oya != "playingField",
-    getCurrentPlayer,
     play,
     draw,
     shoubu,
@@ -404,6 +402,36 @@ const game = ({ testMode = false, gameLength = "year" } = {}) => {
     },
     get winner() {
       return winner;
+    },
+    get currentPlayer() {
+      return getCurrentPlayer();
+    },
+    get players() {
+      return {
+        playerOne: getRole("playerOne"),
+        playerTwo: getRole("playerTwo"),
+      };
+    },
+    get deckCount() {
+      return drawPile.count();
+    },
+    get endRoundOptions() {
+      checkIfScoreImproved();
+      const val =
+        turnCounter.currentPhase.includes("round call") &&
+        turnCounter.permittedToEndRound;
+
+      return {
+        koiKoi: val,
+        shoubu: val,
+        endRound: turnCounter.currentPhase.includes("round call") && !val,
+      };
+    },
+    get getYakuWithCards() {
+      return scorePiles.getYakuWithCards;
+    },
+    get roundLimit() {
+      return roundLimit;
     },
   };
 };

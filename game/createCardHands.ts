@@ -44,6 +44,11 @@ const createCardHands = (
               : totalMatches,
           []
         ),
+    reset: () => {
+      cardHands["playerOne"] = [];
+      cardHands["playerTwo"] = [];
+      cardHands["playingField"] = [];
+    },
     get doPlayersHaveCards() {
       return cardHands.playerOne.length > 0 || cardHands.playerTwo.length > 0;
     },

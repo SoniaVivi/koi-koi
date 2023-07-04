@@ -1,4 +1,4 @@
-const fromCamelCase = (str) =>
+const fromCamelCase = (str: String) =>
   str
     .split(/(?=[A-Z])/)
     .map((s) => s.slice(0, 1).toUpperCase() + s.slice(1))

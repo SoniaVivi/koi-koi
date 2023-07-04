@@ -4,7 +4,7 @@ import { Card, CardSet } from "./gameTypes";
 // { [month]: { [cardName]: # of instances } }
 type TabulatedCards = { [index: number]: { [index: string]: number } };
 type YakuIdentifierType = (cards: TabulatedCards) => number;
-type YakuScore = Array<[string, number]> | [];
+export type YakuScore = Array<[string, number]> | [];
 // Ijou is Japanese for "not less than"
 type IjouArray = Array<{ month: number; name: string; count: number }>;
 type IjouOutput = { month: number; name: string; value: boolean };

@@ -1,0 +1,261 @@
+$transitionDuration: 1s;
+
+.modalContainer {
+  position: fixed;
+  z-index: var(--modal-z-index);
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.wrapper {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  max-width: 960px;
+  width: 960px;
+  height: 100%;
+  background-color: var(--overlay);
+  animation: 0.5s ease-in 0s fadein;
+}
+
+.menu {
+  overflow: hidden;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  width: fit-content;
+  height: 500px;
+  transition: height $transitionDuration ease-in;
+
+  &.collapse {
+    height: 80px;
+
+    :nth-child(2) {
+      display: none;
+    }
+  }
+}
+
+.wrapper > div:first-child,
+.menu li {
+  position: relative;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  width: 480px;
+
+  button,
+  a {
+    flex-grow: 1;
+    width: 100%;
+    height: 80px;
+    padding-top: 20px;
+    padding-bottom: 10px;
+    text-align: center;
+    font-size: 2.2rem;
+    color: var(--text-invert);
+  }
+}
+
+.childrenDividers > *:not(:last-child)::after,
+.wrapper > div:first-child::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 3px;
+  margin: 0 auto;
+  margin-top: auto;
+  background-color: var(--lm-text);
+}
+
+.wrapper > div:first-child {
+  margin-top: 20px;
+}
+
+.wrapper.hidePageWrapper > .pageWrapper {
+  height: 0;
+}
+
+.pageWrapper {
+  overflow-y: scroll;
+  width: 100%;
+  height: 100%;
+  margin-top: auto;
+  padding: 30px;
+  transition: height $transitionDuration ease-in;
+
+  * {
+    color: var(--text-invert);
+  }
+
+  > * {
+    animation: 1s ease-in normal delayedEntrance;
+  }
+}
+
+.gallery {
+  display: grid;
+  grid: auto-flow fit-content(200px) / repeat((auto-fit), min(300px));
+  justify-content: center;
+  justify-items: center;
+  align-items: start;
+  gap: 30px;
+
+  h5 {
+    width: 100%;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  p {
+    margin-bottom: 15px;
+    text-align: center;
+    font-size: 1.2rem;
+  }
+
+  span {
+    font-size: 0.8rem;
+  }
+}
+
+.galleryItem {
+  display: flex;
+  flex-flow: column nowrap;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  background-color: rgb(0, 0, 0, 0.5);
+
+  > span {
+    display: inline-block;
+    width: 100%;
+    margin-top: -10px;
+    margin-bottom: 5px;
+    text-align: center;
+  }
+}
+
+.galleryRow {
+  display: grid;
+  grid: 1fr / repeat(4, 1fr);
+  gap: 5px;
+  width: fit-content;
+  gap: 15px;
+
+  > li {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    gap: 5px;
+  }
+}
+
+.textContainer {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 15px;
+  padding: 15px;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  background-color: rgb(0, 0, 0, 0.5);
+
+  > div {
+    padding-bottom: 15px;
+
+    &:not(:last-child) {
+      border-bottom: 3px solid var(--lm-text);
+    }
+  }
+
+  h5 {
+    margin-bottom: 5px;
+    font-size: 1.5rem;
+  }
+
+  p {
+    font-size: 1.25rem;
+  }
+}
+
+.pageInnerMenu {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  min-width: fit-content;
+  width: 40%;
+  height: fit-content;
+  margin: 0 auto;
+
+  h5 {
+    padding-bottom: 20px;
+    font-size: 2.2rem;
+    text-align: center;
+  }
+
+  .unavailable {
+    opacity: 0.5;
+
+    button {
+      cursor: default;
+      user-select: none;
+      border: none;
+      background: unset;
+      box-shadow: none;
+    }
+  }
+
+  li {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    height: fit-content;
+    text-align: center;
+
+    button {
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      padding: 10px;
+      font-size: 2rem;
+      cursor: pointer;
+    }
+  }
+
+  span {
+    max-width: fit-content;
+    margin-left: 10px;
+    font-size: 1rem;
+  }
+}
+
+@keyframes delayedEntrance {
+  0% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}

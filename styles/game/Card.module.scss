@@ -1,0 +1,13 @@
+.blank {
+  min-width: 63px;
+  min-height: 103px;
+}
+
+.card {
+  border: 0 solid transparent;
+  border-radius: 5px;
+
+  &.matchIndicator {
+    box-shadow: 0 0 7px 4px var(--main-nav-selected);
+  }
+}

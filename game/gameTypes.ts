@@ -14,24 +14,25 @@ export type CardHands = PlayerCardSets & {
   get: (name: CardHandsAndPlayerRoles) => CardSet;
   duplicate: (name: CardHandsAndPlayerRoles) => CardSet;
   getFieldMatches: (card: Card | null) => CardSet;
+  reset: () => void;
   get doPlayersHaveCards(): boolean;
 };
 
-export type Score = { score: number; yaku: Array<string> };
+export type Score = { score: number; yaku: Array<[string, number]> };
 
 export type ScorePiles = PlayerCardSets & {
   scores: {
     playerOne: {
       total: number;
       scored: CardSet;
-      yaku: string[];
+      yaku: Array<[string, number]>;
       modifier: number;
       tempScore: number;
     };
     playerTwo: {
       total: number;
       scored: CardSet;
-      yaku: string[];
+      yaku: Array<[string, number]>;
       modifier: number;
       tempScore: number;
     };
@@ -46,6 +47,10 @@ export type ScorePiles = PlayerCardSets & {
   calculateTempScore: () => { score: number; isImproved: boolean };
   resetTempScore: () => void;
   chooseWinner: () => PlayerNames | "tie";
+  getYakuWithCards: (target: PlayerAliases) => {
+    score: number;
+    yaku: Array<[string, number, CardSet]>;
+  };
   get playerScores(): { playerOne: number; playerTwo: number };
 };
 
@@ -106,3 +111,45 @@ export type PlayerCardSets = {
 export type PlayerAliases = PlayerNames | PlayerRole | "current";
 
 export type GameLengths = "year" | "halfYear" | "season";
+
+// ============================================
+// AI related types
+// ============================================
+
+export type AIPlayerCodeNames =
+  | "miorine"
+  | "dummyPlug"
+  | "kamina"
+  | "tachikoma"
+  | "suletta";
+
+export type AIPlayer = ({
+  name,
+  cardHand,
+  playingField,
+  matchedCards,
+  currentPlayer,
+  phase,
+  cardToPlay = null,
+  cardToMatch = null,
+}: {
+  name: PlayerNames;
+  cardHand: CardSet;
+  playingField: CardSet;
+  matchedCards: CardSet;
+  currentPlayer: PlayerNames;
+  phase: string;
+  cardToPlay: Card | null;
+  cardToMatch: Card | null;
+}) =>
+  | { roundAction: "koiKoi" | "shoubuOrNextTurn" }
+  | { playCard: Card; matchCard: null | Card }
+  | { drawCard: boolean }
+  | {};
+
+export type AIInterfaceActions =
+  | "play"
+  | "match"
+  | "draw"
+  | "koiKoi"
+  | "endRound";
