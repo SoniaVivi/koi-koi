@@ -76,7 +76,7 @@
   left: 0;
   z-index: var(--modal-z-index);
   display: grid;
-  grid: 1fr / 1fr minmax(540px, 960px) 1fr;
+  grid: 1fr / 1fr minmax(var(--width), 960px) 1fr;
   min-width: 100%;
   min-height: 100%;
   background-color: var(--overlay);

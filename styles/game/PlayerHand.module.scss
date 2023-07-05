@@ -73,3 +73,9 @@
     grid: 1fr 1fr / auto-flow 63px;
   }
 }
+
+@media (max-width: 450px) {
+  .cardWrapper {
+    grid: 1fr 1fr 1fr / auto-flow 63px;
+  }
+}
