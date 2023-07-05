@@ -41,7 +41,6 @@ body {
   margin: 0;
   min-width: 540px;
   min-height: 100vh;
-  height: 100%;
   font-size: 16px;
 }
 
@@ -51,12 +50,12 @@ body {
 
 #__next {
   display: grid;
-  grid: 1fr / 1fr minmax(540px, 960px) 1fr;
+  grid: minmax(600px, 1fr) / 1fr minmax(540px, 960px) 1fr;
   justify-content: center;
   align-items: center;
-  min-width: 100%;
-  min-height: 100%;
-  width: fit-content;
+  min-width: 540px;
+  min-height: 100vh;
+  width: 100%;
   overflow: hidden;
 }
 
