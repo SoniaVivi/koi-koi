@@ -42,6 +42,18 @@ const miorine: AIPlayer = ({
     playingField
   );
 
+  if (
+    matches.length != cardHand.length &&
+    Math.floor(Math.random() * 100) + 1 < 85
+  ) {
+    return {
+      playCard: cardHand.find(
+        (card) =>
+          !matches.some((matchData) => matchData.handCard.month == card.month)
+      ),
+    };
+  }
+
   switch (matches.length) {
     case 0: {
       return {
@@ -52,7 +64,6 @@ const miorine: AIPlayer = ({
     default: {
       const index = Math.floor(Math.random() * matches.length);
       return {
-        discardCard: false,
         playCard: matches[index].handCard,
         matchCard: selectCardsToMatch(matches[index].matchCards),
       };

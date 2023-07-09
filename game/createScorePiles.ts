@@ -111,16 +111,18 @@ const createScorePiles = (
         ...scorePiles.scores[target].scored,
         ...dump(target),
       ];
-      scorePiles.resetScoreModifiers();
+      scorePiles.reset();
     },
     addScoreModifier: (player: PlayerAliases, modifier: number) => {
       const target = getName(player);
       scorePiles.scores[target].modifier *= modifier;
     },
-    resetScoreModifiers: () => {
+    reset: () => {
       scorePiles.scores.playerOne.modifier = 1.0;
       scorePiles.scores.playerTwo.modifier = 1.0;
       scorePiles.resetTempScore();
+      dump("playerOne");
+      dump("playerTwo");
     },
     calculateTempScore() {
       const prevScore = scorePiles.scores[getName("current")].tempScore;

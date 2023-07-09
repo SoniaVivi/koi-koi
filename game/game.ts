@@ -278,7 +278,6 @@ const game = ({ testMode = false, gameLength = "year" } = {}) => {
       turnCounter.currentPhase.match(/round call/)
     ) {
       scorePiles.scorePoints("current");
-      scorePiles.resetScoreModifiers();
       checkIfRoundLimitReached();
       [_oya, _ko] = [getName("current"), getName("opponent")];
       turnCounter.endRound();
@@ -290,6 +289,7 @@ const game = ({ testMode = false, gameLength = "year" } = {}) => {
   };
 
   const koiKoi = () => {
+    checkIfScoreImproved();
     if (
       turnCounter.permittedToEndRound &&
       turnCounter.currentPhase.match(/round call/)
@@ -313,7 +313,7 @@ const game = ({ testMode = false, gameLength = "year" } = {}) => {
     ) {
       turnCounter.permitToEndRound(true);
       checkIfRoundLimitReached();
-      scorePiles.resetScoreModifiers();
+      scorePiles.reset();
       turnCounter.endRound(true);
     }
   };
@@ -349,7 +349,6 @@ const game = ({ testMode = false, gameLength = "year" } = {}) => {
         turnCounter.currentPhase.match(/round call/) &&
         cardHands.doPlayersHaveCards
       ) {
-        scorePiles.resetTempScore();
         checkForNoCards();
         return turnCounter.nextTurn;
       }

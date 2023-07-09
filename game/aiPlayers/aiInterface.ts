@@ -1,5 +1,11 @@
 import gameFactory from "../game";
-import { AIPlayer, AIInterfaceActions, PlayerNames, Card } from "../gameTypes";
+import {
+  AIPlayer,
+  AIInterfaceActions,
+  PlayerNames,
+  Card,
+  GamePhases,
+} from "../gameTypes";
 
 const aiInterface = (
   game: ReturnType<typeof gameFactory>,
@@ -30,8 +36,11 @@ const aiInterface = (
     playingField: game.getHand("playingField"),
     cardToPlay: game.cardToPlay,
     cardToMatch: game.cardToMatch,
-    matchedCards: game.getScorePile(playerName),
-    phase: game.phase,
+    matchedCards: {
+      playerOne: game.getScorePile("playerOne"),
+      playerTwo: game.getScorePile("playerTwo"),
+    },
+    phase: game.phase as GamePhases,
     currentPlayer: game.currentPlayer,
   });
 
