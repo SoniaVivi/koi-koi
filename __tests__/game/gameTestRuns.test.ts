@@ -83,8 +83,8 @@ describe("Test run #2: 'Exhaustive draw'", () => {
 
     expect(game.getHand("playerOne").length).toEqual(0);
     expect(game.getHand("playerTwo").length).toEqual(0);
-    expect(game.round).toEqual(2);
     expect(game.phase).toEqual("setup");
+    expect(game.round).toEqual(2);
     expect(game.oya).toEqual(oya);
     expect(game.ko).toEqual(ko);
   });

@@ -64,6 +64,7 @@ const createTurnCounter = (
     permitToEndRound: (newValue: boolean) =>
       (turnCounter.permittedToEndRound = newValue),
     endRound: (isTie = false) => {
+      if (!turnCounter.permittedToEndRound) return false;
       turnCounter.permittedToEndRound = false;
       if (isTie) {
         turnCounter.currentRound += 1;

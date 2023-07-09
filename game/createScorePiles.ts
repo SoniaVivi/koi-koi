@@ -83,6 +83,7 @@ const createScorePiles = (
     resetScoreModifiers: () => {
       scorePiles.scores.playerOne.modifier = 1.0;
       scorePiles.scores.playerTwo.modifier = 1.0;
+      scorePiles.resetTempScore();
     },
     calculateTempScore() {
       const prevScore = scorePiles.scores[getName("current")].tempScore;

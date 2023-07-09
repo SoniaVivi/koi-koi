@@ -311,6 +311,7 @@ const game = ({ testMode = false, gameLength = "year" } = {}) => {
       !cardHands.doPlayersHaveCards &&
       turnCounter.currentPhase.match(/round call/)
     ) {
+      turnCounter.permitToEndRound(true);
       checkIfRoundLimitReached();
       scorePiles.resetScoreModifiers();
       turnCounter.endRound(true);
@@ -318,7 +319,7 @@ const game = ({ testMode = false, gameLength = "year" } = {}) => {
   };
 
   const checkIfRoundLimitReached = () => {
-    if (turnCounter.currentRound == roundLimit) {
+    if (turnCounter.currentRound >= roundLimit) {
       turnCounter.endGame();
       winner = scorePiles.chooseWinner();
     }
