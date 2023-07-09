@@ -68,6 +68,7 @@ const createTurnCounter = (
       if (isTie) {
         turnCounter.currentRound += 1;
         turnCounter.currentPhase = "setup";
+        turnCounter.currentPlayer = "oya";
       } else if (turnCounter.currentPhase.match(/round call/)) {
         turnCounter.currentPhase = "setup";
         turnCounter.currentPlayer = "oya";

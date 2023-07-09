@@ -312,6 +312,7 @@ const game = ({ testMode = false, gameLength = "year" } = {}) => {
       turnCounter.currentPhase.match(/round call/)
     ) {
       checkIfRoundLimitReached();
+      scorePiles.resetScoreModifiers();
       turnCounter.endRound(true);
     }
   };
