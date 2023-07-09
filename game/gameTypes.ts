@@ -136,16 +136,12 @@ export type AIPlayer = ({
   name: PlayerNames;
   cardHand: CardSet;
   playingField: CardSet;
-  matchedCards: CardSet;
+  matchedCards: { playerOne: CardSet; playerTwo: CardSet };
   currentPlayer: PlayerNames;
-  phase: string;
+  phase: GamePhases;
   cardToPlay: Card | null;
   cardToMatch: Card | null;
-}) =>
-  | { roundAction: "koiKoi" | "shoubuOrNextTurn" }
-  | { playCard: Card; matchCard: null | Card }
-  | { drawCard: boolean }
-  | {};
+}) => AIAction;
 
 export type AIInterfaceActions =
   | "play"
@@ -153,3 +149,19 @@ export type AIInterfaceActions =
   | "draw"
   | "koiKoi"
   | "endRound";
+
+export type GamePhases =
+  | "chooseOya"
+  | "setup"
+  | "oya hand play"
+  | "oya draw play"
+  | "oya round call"
+  | "ko hand play"
+  | "ko draw play"
+  | "ko round call";
+
+export type AIAction =
+  | { roundAction: "koiKoi" | "shoubuOrNextTurn" }
+  | { playCard: Card; matchCard: null | Card }
+  | { drawCard: boolean }
+  | {};

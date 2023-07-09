@@ -10,6 +10,43 @@ import {
 } from "./gameTypes";
 import { getYakuCardIndices, identifyYaku } from "./yakuMatcher";
 
+export function generateYakuList(
+  cards: CardSet,
+  includeCards = false
+): { score: number; yaku: Array<[string, number, CardSet]> } | Score {
+  const getYaku = (cards: CardSet) => identifyYaku(cards);
+  let result: Score = { score: 0, yaku: [] };
+  let potentialYaku = getYaku(cards);
+
+  while (potentialYaku.length != 0) {
+    potentialYaku = potentialYaku.sort((a, b) => b[1] - a[1]);
+    const current = potentialYaku.splice(0, 1)[0];
+    if (includeCards) {
+      // If include cards is true, it will return with 3 elems
+      //@ts-ignore
+      current.push([] as CardSet);
+    }
+
+    result = {
+      score: result["score"] + current[1],
+      yaku: result["yaku"].concat([current]),
+    };
+
+    const temp = getYakuCardIndices(current[0], cards) as Array<number>;
+    cards = cards.filter((card, i) => {
+      if (!temp.includes(i as number)) return true;
+      if (includeCards) {
+        // Empty array is present
+        //@ts-ignore
+        result.yaku[result.yaku.length - 1][2].push(card);
+      }
+    });
+    potentialYaku = getYaku(cards);
+  }
+
+  return result;
+}
+
 const createScorePiles = (
   getName: (name: CardHandsAndPlayerRoles) => PlayerNames
 ): ScorePiles => {
@@ -41,12 +78,12 @@ const createScorePiles = (
       return duplicateCardSet(scorePiles[name]);
     },
     getYakuWithCards: (target: PlayerAliases) =>
-      generateYakuList(target, true) as {
+      generateYakuList(scorePiles.get(target), true) as {
         score: number;
         yaku: Array<[string, number, CardSet]>;
       },
     getTotal: (target: PlayerAliases) =>
-      generateYakuList(target, false) as Score,
+      generateYakuList(scorePiles.get(target), false) as Score,
     add: (name: PlayerAliases, cards: Card | CardSet): CardSet => {
       if (cards.constructor !== Array) {
         cards = [cards] as CardSet;
@@ -110,45 +147,6 @@ const createScorePiles = (
       };
     },
   };
-
-  function generateYakuList(
-    name: PlayerAliases,
-    includeCards = false
-  ): { score: number; yaku: Array<[string, number, CardSet]> } | Score {
-    const target = getName(name) as PlayerNames;
-    const getYaku = (cards: CardSet) => identifyYaku(cards);
-    let result: Score = { score: 0, yaku: [] };
-    let cards: CardSet = scorePiles.get(target);
-    let potentialYaku = getYaku(cards);
-
-    while (potentialYaku.length != 0) {
-      potentialYaku = potentialYaku.sort((a, b) => b[1] - a[1]);
-      const current = potentialYaku.splice(0, 1)[0];
-      if (includeCards) {
-        // If include cards is true, it will return with 3 elems
-        //@ts-ignore
-        current.push([] as CardSet);
-      }
-
-      result = {
-        score: result["score"] + current[1],
-        yaku: result["yaku"].concat([current]),
-      };
-
-      const temp = getYakuCardIndices(current[0], cards) as Array<number>;
-      cards = cards.filter((card, i) => {
-        if (!temp.includes(i as number)) return true;
-        if (includeCards) {
-          // Empty array is present
-          //@ts-ignore
-          result.yaku[result.yaku.length - 1][2].push(card);
-        }
-      });
-      potentialYaku = getYaku(cards);
-    }
-
-    return result;
-  }
 
   const dump = (target: PlayerAliases): CardSet => {
     const removed = duplicateCardSet(scorePiles[getName(target)]);
