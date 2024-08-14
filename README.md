@@ -2,6 +2,8 @@
 
 ![koiKoi](https://github.com/SoniaVivi/koi-koi/assets/55420399/3d38b479-f335-4390-ba5c-6b0b65e6e57b)
 
+You can play the latest stable version on the main branch here: https://koikoisvivn.onrender.com/
+
 Koi-Koi (こいこい)) is a japanese card game played with hanafuda. The objective is to form card combinations called, 'yaku' from cards in a point pile. After a yaku is made, a player can call "shobu" to end the round and score points or "koi-koi" to continue and potentially double their points.
 
 ## Current Features
